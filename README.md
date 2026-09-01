@@ -2,7 +2,7 @@
 
 **SEC filings research and analysis tool.**
 
-> Hi there! Bun and Elysia were new to me, and choosing this stack felt like a good opportunity to explore tools I hadn't worked with before.
+> Hi there! This is Sharif! Bun and Elysia were new to me, and choosing this stack felt like a good opportunity to explore tools I hadn't worked with before.
 
 ## Stack
 
