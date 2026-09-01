@@ -8,6 +8,7 @@
   "dependencies": {
     "@elysiajs/cors": "^1.2.0",
     "@elysiajs/static": "^1.2.0",
+    "@sinclair/typebox": "^0.34.52",
     "elysia": "^1.2.0"
   },
   "devDependencies": {

@@ -1,32 +1,13 @@
 import { NotFoundError, UpstreamError } from "../errors";
+import {
+  parseSecResponse,
+  secCompanyTickersResponseSchema,
+  secSubmissionsResponseSchema,
+  type SecRecentFilings,
+} from "../schemas/sec";
 
 const SEC_TICKERS_URL = "https://www.sec.gov/files/company_tickers.json";
 const SEC_SUBMISSIONS_URL = "https://data.sec.gov/submissions";
-
-type SecCompanyTicker = {
-  cik_str: number;
-  ticker: string;
-  title: string;
-};
-
-type SecCompanyTickersResponse = Record<string, SecCompanyTicker>;
-
-type SecRecentFilings = {
-  accessionNumber: string[];
-  form: string[];
-  filingDate: string[];
-  reportDate: string[];
-  primaryDocument: string[];
-  primaryDocDescription: string[];
-};
-
-type SecSubmissionsResponse = {
-  cik: string;
-  name: string;
-  filings: {
-    recent: SecRecentFilings;
-  };
-};
 
 export type Filing = {
   accessionNumber: string;
@@ -66,12 +47,12 @@ function formatCik(cik: number): string {
 
 function parseRecentFilings(recent: SecRecentFilings): Filing[] {
   return recent.accessionNumber.map((_, i) => ({
-    accessionNumber: recent.accessionNumber[i]!,
-    form: recent.form[i]!,
-    filingDate: recent.filingDate[i]!,
-    reportDate: recent.reportDate[i]!,
-    primaryDocument: recent.primaryDocument[i]!,
-    primaryDocDescription: recent.primaryDocDescription[i]!,
+    accessionNumber: recent.accessionNumber[i],
+    form: recent.form[i],
+    filingDate: recent.filingDate[i],
+    reportDate: recent.reportDate[i],
+    primaryDocument: recent.primaryDocument[i],
+    primaryDocDescription: recent.primaryDocDescription[i],
   }));
 }
 
@@ -81,7 +62,10 @@ async function loadTickerMap(): Promise<Map<string, number>> {
   }
 
   const response = await secFetch(SEC_TICKERS_URL);
-  const data = (await response.json()) as SecCompanyTickersResponse;
+  const data = parseSecResponse(
+    secCompanyTickersResponseSchema,
+    await response.json(),
+  );
 
   tickerToCik = new Map(
     Object.values(data).map((entry) => [
@@ -111,7 +95,10 @@ export async function fetchCompanyFilings(cik: number): Promise<{
 }> {
   const url = `${SEC_SUBMISSIONS_URL}/CIK${formatCik(cik)}.json`;
   const response = await secFetch(url);
-  const data = (await response.json()) as SecSubmissionsResponse;
+  const data = parseSecResponse(
+    secSubmissionsResponseSchema,
+    await response.json(),
+  );
 
   return {
     name: data.name,
