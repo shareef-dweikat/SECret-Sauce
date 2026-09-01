@@ -50,11 +50,11 @@ async function secFetch(url: string): Promise<Response> {
       },
     });
   } catch (cause) {
-    throw new UpstreamError("Failed to fetch data from SEC", cause);
+    throw new UpstreamError(`Failed to fetch data from ${url}`, cause);
   }
 
   if (!response.ok) {
-    throw new UpstreamError("Failed to fetch data from SEC", response.status);
+    throw new UpstreamError(`Failed to fetch data from ${url}`, response.status);
   }
 
   return response;
