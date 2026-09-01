@@ -1,0 +1,15 @@
+{
+  "name": "secret-sauce",
+  "private": true,
+  "workspaces": ["backend", "frontend"],
+  "scripts": {
+    "dev": "bun run --parallel dev:backend dev:frontend",
+    "dev:backend": "bun --watch backend/src/index.ts",
+    "dev:frontend": "bun --cwd frontend vite",
+    "build": "bun run build:frontend && bun run build:backend",
+    "build:frontend": "bun --cwd frontend vite build",
+    "build:backend": "bun build backend/src/index.ts --outdir backend/dist --target bun",
+    "start": "NODE_ENV=production bun backend/dist/index.js",
+    "typecheck": "bun run --filter backend typecheck && bun run --filter frontend typecheck"
+  }
+}
