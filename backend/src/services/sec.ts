@@ -88,6 +88,27 @@ export async function lookupCik(ticker: string): Promise<number> {
   return cik;
 }
 
+export type FilingsQuery = {
+  page: number;
+  limit: number;
+  form?: string;
+};
+
+export function listFilings(filings: Filing[], query: FilingsQuery) {
+  const filtered = query.form
+    ? filings.filter((f) => f.form === query.form)
+    : filings;
+
+  const total = filtered.length;
+  const totalPages = total === 0 ? 0 : Math.ceil(total / query.limit);
+  const offset = (query.page - 1) * query.limit;
+
+  return {
+    filings: filtered.slice(offset, offset + query.limit),
+    pagination: { page: query.page, limit: query.limit, total, totalPages },
+  };
+}
+
 export async function fetchCompanyFilings(cik: number): Promise<{
   name: string;
   cik: number;
