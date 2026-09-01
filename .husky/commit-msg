@@ -1,0 +1,18 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/common.sh"
+
+commit_msg_file="$1"
+commit_msg=$(grep -v '^#' "$commit_msg_file" | sed '/^[[:space:]]*$/d' | head -n 1)
+
+if [ -z "$commit_msg" ]; then
+  echo "husky - commit-msg: commit message is required"
+  echo "Format: TICKET-123: Describe what changed"
+  exit 1
+fi
+
+if ! printf '%s\n' "$commit_msg" | grep -Eq '^[A-Z][A-Z0-9]*-[0-9]+: .{5,}$'; then
+  echo "husky - commit-msg: commit message must include a ticket number and description"
+  echo "Format: TICKET-123: Describe what changed"
+  echo "Example: SEC-42: Add company search endpoint"
+  exit 1
+fi
